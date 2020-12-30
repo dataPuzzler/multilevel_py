@@ -3,10 +3,12 @@
 
 from setuptools import setup, find_packages
 import pathlib
+import sys
 
 here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / 'README.rst').read_text(encoding='utf-8')
-
+print(long_description)
+sys.exit()
 # version
 version_file = open('VERSION')
 version = version_file.read().strip()
@@ -20,7 +22,8 @@ setup(
     name='multilevel_py',  # Required
     version='1.0.0',  # Required
     description='A python framework simplifying the representation of deep domain classification hierarchies',  # Optional
-
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
     url='https://github.com/dataPuzzler/multilevel_py',  # Optional
 
     # This should be your name or the name of the organization which owns the

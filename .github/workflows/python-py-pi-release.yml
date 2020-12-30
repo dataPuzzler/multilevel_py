@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
       inputs:
         tags:
-          description: 'Test scenario tags'
+          description: 'Tag (major.minor.patch) scheme'
           required: true
 
 jobs:

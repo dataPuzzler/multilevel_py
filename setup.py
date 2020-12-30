@@ -52,7 +52,7 @@ setup(
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate you support Python 3. These classifiers are *not*
         # checked by 'pip install'. See instead 'python_requires' below.
-        'Programming Language:: Python:: 3',
+        'Programming Language :: Python :: 3.8'
     ],
 
     # This field adds keywords for your project which will appear on the

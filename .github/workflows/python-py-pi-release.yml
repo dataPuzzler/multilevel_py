@@ -6,7 +6,7 @@ name: Upload a new Realase of the Python Package
 on:
   workflow_dispatch:
       inputs:
-        tags:
+        tag:
           description: 'Tag (major.minor.patch) scheme'
           required: true
 

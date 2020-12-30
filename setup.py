@@ -3,12 +3,10 @@
 
 from setuptools import setup, find_packages
 import pathlib
-import sys
 
 here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / 'README.rst').read_text(encoding='utf-8')
-print(long_description)
-sys.exit()
+
 # version
 version_file = open('VERSION')
 version = version_file.read().strip()

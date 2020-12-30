@@ -14,11 +14,9 @@ version = version_file.read().strip()
 if version == '0.0.0':
     raise Exception("No valid version set")
 
-
-
 setup(
     name='multilevel_py',  # Required
-    version='1.0.0',  # Required
+    version=version,  # Required
     description='A python framework simplifying the representation of deep domain classification hierarchies',  # Optional
     long_description=long_description,
     long_description_content_type='text/x-rst',

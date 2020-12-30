@@ -1,0 +1,67 @@
+{% macro prop_attr(prop) -%}
+    <tr>
+            {% if prop.is_final %}
+            <td align='left'>{{"        " ~ prop.steps_to_instantiation ~ "," ~ prop.steps_from_instantiation ~ ", final"  |e}}</td>
+            {% else %}
+            <td align='left'>{{"        " ~ prop.steps_to_instantiation ~ "," ~ prop.steps_from_instantiation |e}}</td>
+            {% endif %}
+
+    </tr>
+{%- endmacro %}
+
+{% macro constraints(constraints, add_del_str) -%}
+    {% for constr in constraints %}
+    <tr>
+        <td align='left'>{{ "       " ~ add_del_str ~ constr.name }}</td>
+    </tr>
+    {% endfor %}
+{%- endmacro %}
+
+{% macro value(prop) -%}}
+    <tr>
+        <td align='left'>{{"        " ~ prop.get_viz_value_str()|e}}</td>
+    </tr>
+{%- endmacro %}
+
+
+
+<table cellborder='0' cellspacing='0'>
+    <tr>
+        <td align='left'><b>{{ clabject.viz_name_str() }}</b></td>
+    </tr>
+    {% for prop in clabject.__ml_props__.values()%}
+    <tr>
+        <td port="{{prop.prop_name}}">
+            <table cellborder='0' cellspacing='0'>
+                <tr>
+                    <td align='left'><b>{{prop.prop_name}}</b></td>
+                </tr>
+                <tr>
+                    <td align='left'><u>meta_prop_attrs:</u></td>
+                </tr>
+                {{prop_attr(prop)}}
+                {% if prop.prop_value %}
+                    <tr>
+                        <td align='left'><u>prop_value:</u></td>
+                    </tr>
+                    {{value(prop)}}
+                {% else %}
+                    <tr>
+                        <td align='left'><u>prop_constr:</u></td>
+                    </tr>
+                    {{constraints(prop.constraints, "") }}
+
+                {% endif %}}
+                {% if prop.re_init_prop_constr is not none %}
+                        <tr>
+                            <td align='left'><u>re_init_constr:</u></td>
+                        </tr>
+                        {{constraints(prop.re_init_prop_constr.del_constr, "-")}}
+                        {{constraints(prop.re_init_prop_constr.add_constr, "+")}}
+                {% endif %}
+
+            </table>
+        </td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,4 +1,4 @@
-name Run Unittests
+name: Run unittests
 on: [push]
 
 jobs:

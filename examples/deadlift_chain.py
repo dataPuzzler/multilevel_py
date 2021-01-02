@@ -18,7 +18,7 @@ def model_snippet():
 
     conversion_factor_prop = create_clabject_prop(n='conversion_factor', t=1, f='*', i_f=True, c=[is_float_constraint])
     is_mass_unit_constr = prop_constraint_ml_instance_of_th_order_functional(MassUnit, instantiation_order=1)
-    base_unit_prop = create_clabject_prop(n='base_unit', t=0, f='*', v=kilogram, c=[is_mass_unit_constr])
+    base_unit_prop = create_clabject_prop(n='base_unit', t=0, f='*', i_assoc=True, c=[is_mass_unit_constr], v=kilogram)
     DerivedMassUnit = MassUnit(name="DerivedMassUnit")
     DerivedMassUnit.define_props([conversion_factor_prop, base_unit_prop])
 
@@ -28,7 +28,7 @@ def model_snippet():
     # Weigh Load Hierarchy
     planned_value_prop = create_clabject_prop(n='planned_value', t=1, f='*', i_f=False, c=[is_float_constraint])
     actual_value_prop = create_clabject_prop(n='actual_value', t=2, f='*', i_f=True, c=[is_float_constraint])
-    mass_unit_prop = create_clabject_prop(n='mass_unit', t=0, f='*', i_f=False, v=MassUnit)
+    mass_unit_prop = create_clabject_prop(n='mass_unit', t=0, f='*', i_f=False, i_assoc=True, v=MassUnit)
     WeightLoad = DslRoot(name="WeightLoad")
     WeightLoad.define_props([planned_value_prop, actual_value_prop, mass_unit_prop])
 
@@ -44,7 +44,7 @@ def model_snippet():
                                                  declare_as_instance=True)
 
     # Deadlift Hierarchy
-    weight_load_prop = create_clabject_prop(n='weight_load', t=0, f='*', i_f=False, v=WeightLoad)
+    weight_load_prop = create_clabject_prop(n='weight_load', t=0, f='*', i_f=False, i_assoc=True, v=WeightLoad)
     Deadlift = DslRoot(name="Deadlift")
     Deadlift.define_props([weight_load_prop])
 

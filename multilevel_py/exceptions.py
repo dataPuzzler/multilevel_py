@@ -9,6 +9,22 @@ class InconsistentCreateClabjectPropArgsException(Exception):
         return self.ex_msg
 
 
+class TypeSpecificConstraintRemovalException(Exception):
+    def __init__(self, constr):
+        self.ex_msg = "The constr {Constr} is type specific and thus can not be removed"
+
+    def __str__(self):
+        return self.ex_msg
+
+
+class InvalidPropValueConstraintException(Exception):
+    def __init__(self, constr):
+        self.ex_msg = "The provided constr {CONSTR} not a PropValueConstraint object"
+
+    def __str__(self):
+        return self.ex_msg
+
+
 class NotAClabjectException(Exception):
     def __init__(self, obj):
         self.ex_msg = "The provided obj {OBJ} not a clabject of the multilevel_py framework". \
@@ -114,7 +130,7 @@ class ConstraintViolationException(Exception):
         res_str = "\n"
         for constr_holder, violated_constraints in self.violated_constraints.items():
             for constraint in violated_constraints:
-                res_str += "{HOLDER} violated {CONSTR} for reason {REASON}".format(HOLDER=constr_holder,
+                res_str += "'{HOLDER}' violated '{CONSTR}' for reason '{REASON}'".format(HOLDER=constr_holder,
                                                                                    CONSTR=constraint.name,
                                                                                    REASON=constraint.violation_reason)
                 res_str += "\n"

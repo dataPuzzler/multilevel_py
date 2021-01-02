@@ -4,7 +4,7 @@ from pathlib import Path
 def model_snippet():
     from multilevel_py.constraints import prop_constraint_ml_instance_of_th_order_functional, \
         prop_constraint_optional_value_functional as optional
-    from multilevel_py.constraints import is_str_constraint, is_date_constraint
+    from multilevel_py.constraints import is_str_constraint, is_date_constraint, EmptyValue
     from multilevel_py.core import create_clabject_prop, Clabject
     from datetime import date
 
@@ -14,7 +14,7 @@ def model_snippet():
     year_of_birth = create_clabject_prop(
         n="year_of_birth", t=3, f='*', i_f=True, c=[is_date_constraint])
     father = create_clabject_prop(
-        n="father", t=3, f='*', i_f=True, c=[])
+        n="father", t=3, f='*', i_f=True, i_assoc=True, c=[])
     make_noise = create_clabject_prop(
         n="make_noise", t=1, f='*', i_f=False, i_m=True, c=[])
     Breed.define_props([make_noise, coat_colour, father, year_of_birth])
@@ -48,7 +48,7 @@ def model_snippet():
 
     sam = SableRoughCollie(name="Sam", init_props={
         "year_of_birth": date(year=1996, month=3, day=2),
-        "father": None,
+        "father": EmptyValue,
         "make_noise": make_noise}, 
         declare_as_instance=True)
 
@@ -64,7 +64,7 @@ def model_snippet():
         speed_adjustments={"year_of_birth": -1, "father": -1},
         init_props={
         "year_of_birth": date(year=2016, month=9, day=15),
-        "father": None},
+        "father": EmptyValue},
         declare_as_instance=True)
 
     print(Collie.make_noise()) # > Wuff - I'm a Collie

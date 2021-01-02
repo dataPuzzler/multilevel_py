@@ -3,7 +3,7 @@ from copy import deepcopy
 from typing import List, Callable, Any, Dict
 
 from multilevel_py.clabject_prop import CollectionDescription, \
-    BaseClabjectProp, SingleValueProp, CollectionProp, MethodProp, StateConstraintProp
+    BaseClabjectProp, SimpleProp, CollectionProp, MethodProp, StateConstraintProp, AssociationProp
 from multilevel_py.constraints import create_violated_constraint_dict, ReInitPropConstr, PropValueConstraint
 from multilevel_py.exceptions import UninitialisedPropException, ConstraintViolationException, \
     UndefinedPropsException, ChangeFinalPropException, UnduePropInstantiationException, \
@@ -14,7 +14,8 @@ from multilevel_py.exceptions import UninitialisedPropException, ConstraintViola
 def create_clabject_prop(n: str, t: int, f, c: List[Callable[[Any], bool]] = [],
                          i_f: bool = True,
                          i_m: bool = False,
-                         i_sc=False,
+                         i_sc: bool=False,
+                         i_assoc: bool=False,
                          coll_desc: tuple = None, v=None, d=None):
     """
     Stable Interface for the creation of clabject properties, the suitable ClabjectProp class is chosen in dependence
@@ -25,8 +26,10 @@ def create_clabject_prop(n: str, t: int, f, c: List[Callable[[Any], bool]] = [],
         t: shorthand for steps_to_instantiation
         f: shorthand for steps_from_instantiation, integer or * (str) for remaining infinite may steps
         c: shorthand for constraints
+
         i_f: shorthand for is_final
         i_m: shorthand for is_method
+        i_assoc: shorthand for is_association
         i_sc: shorthand for is_stateConstraint
         coll_desc: (min, max, member_constr) tuple that is translated to a CollectionDescription object
         v: shorthand for prop_value
@@ -35,17 +38,9 @@ def create_clabject_prop(n: str, t: int, f, c: List[Callable[[Any], bool]] = [],
     Returns:
         An obj which is an instance of a class that inherits from BaseClabjectProp
     """
-    if sum([int(i_m), int(i_sc)]) > 1:
+    if sum([int(i_m), int(i_sc), int(bool(coll_desc)), int(i_assoc)]) > 1:
         raise InconsistentCreateClabjectPropArgsException(
-            ex_msg="A Property can't be a Method and a StateConstraint at the same time")
-    if sum([int(i_m), int(coll_desc is not None)]) > 1:
-        raise InconsistentCreateClabjectPropArgsException(
-            ex_msg="A Property can't be a Method and Collection at the same time"
-        )
-    if sum([int(i_sc), int(coll_desc is not None)]) > 1:
-        raise InconsistentCreateClabjectPropArgsException(
-            ex_msg="A Property can't be a Collection and a StateConstraint at the same time"
-        )
+            ex_msg="A Property can only be of one specific kind (Method, Association, Collection or StateConstraint)")
 
     f = math.inf if f == "*" else f
     c = [] if not len(c) else c
@@ -62,6 +57,18 @@ def create_clabject_prop(n: str, t: int, f, c: List[Callable[[Any], bool]] = [],
             prop_value=v,
             default_value=d
         )
+
+    elif i_assoc:
+        return AssociationProp(
+            prop_name=n,
+            steps_to_instantiation=t,
+            steps_from_instantiation=f,
+            constraints=c,
+            is_final=i_f,
+            prop_value=v,
+            default_value=d
+        )
+
     elif i_sc:
         return StateConstraintProp(
             prop_name=n,
@@ -84,7 +91,7 @@ def create_clabject_prop(n: str, t: int, f, c: List[Callable[[Any], bool]] = [],
             collection_desc=coll_desc
         )
     else:
-        return SingleValueProp(
+        return SimpleProp(
             prop_name=n,
             steps_to_instantiation=t,
             steps_from_instantiation=f,
@@ -374,7 +381,8 @@ class MetaClabject(type):
     def instance_of(cls):
         """
         Returns:
-            The 'ontological' meta clabject of the current clabject. The term ontological should indicate that this relation is related to the respective target domain abstraction.
+            The 'ontological' meta clabject of the current clabject. The term ontological should indicate that
+            this relation is related to the respective target domain abstraction.
         """
 
         domain_meta = getattr(cls, "__domain_meta__")
@@ -404,7 +412,7 @@ class MetaClabject(type):
         framework_props = cls.get_framework_attrs()
         if item not in framework_props:
             if item not in cls.__ml_props__:
-                raise UndefinedPropsException(undefined_props=set([item]))
+                raise UndefinedPropsException(undefined_props=set(item))
             else:
                 return cls.__ml_props__[item].prop_value
 
@@ -616,3 +624,27 @@ def is_clabject(obj: Any) -> bool:
         a boolean value that indicates whether the predicate is fulfilled for the given obj
     """
     return type(obj) == MetaClabject
+
+
+def _built_is_clabject_or_empty_constraint(eval_on_init=True):
+    """
+    Built a prop value constraint that checks whether the given value is a multilevel clabject - to avoid a cyclic
+    dependency between core and constraint modules
+
+    Args:
+        eval_on_init: value indicating whether the constr should be evaluated on (re) init
+    Returns:
+        a parameterised, callable PropValueConstraint object
+    """
+    from multilevel_py.constraints import prop_constraint_optional_value_functional as optional
+
+    def eval_value_func(value: Any):
+        if not is_clabject(value):
+            return "The given value is not a clabject"
+        else:
+            return ""
+
+    return optional(PropValueConstraint(name="is_a_clabject", eval_value_func=eval_value_func, eval_on_init=eval_on_init))
+
+
+is_clabect_or_empty_constr = _built_is_clabject_or_empty_constraint(True)

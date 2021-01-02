@@ -1,7 +1,7 @@
 import pytest
 import math
 from multilevel_py.core import ClabjectPropDict
-from multilevel_py.clabject_prop import SingleValueProp
+from multilevel_py.clabject_prop import SimpleProp
 
 
 @pytest.fixture(scope="module")
@@ -11,7 +11,7 @@ def clabject_prop_dict():
 
 @pytest.fixture(scope="module")
 def lev_3_prop():
-    return SingleValueProp(
+    return SimpleProp(
         prop_name="duration",
         steps_to_instantiation=3,
         steps_from_instantiation=math.inf,

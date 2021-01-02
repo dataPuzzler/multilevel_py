@@ -4,8 +4,9 @@ from collections.abc import Iterable
 from datetime import time, date, timedelta, datetime
 from inspect import signature
 from types import FunctionType
-from typing import Callable, Any, Union, Tuple, Collection
-from multilevel_py.exceptions import InvalidInstantiationOrderException, NotAClabjectException
+from typing import Callable, Any, Union, Tuple, Collection, List
+from multilevel_py.exceptions import InvalidInstantiationOrderException, \
+    NotAClabjectException, InvalidPropValueConstraintException, TypeSpecificConstraintRemovalException
 
 
 class BaseConstraint:
@@ -32,6 +33,7 @@ class PropValueConstraint(BaseConstraint):
         super(PropValueConstraint, self).__init__(name=name)
         self.eval_value_func = eval_value_func
         self.eval_on_init = eval_on_init
+        self.type_specific = False
 
     def __call__(self, prop_value: Any) -> bool:
         self.violation_reason = ""
@@ -364,6 +366,15 @@ def prop_constraint_and_functional(constraint_a: PropValueConstraint, constraint
     return PropValueConstraint(name=name, eval_value_func=eval_func, eval_on_init=eval_on_init)
 
 
+class _EmptyValueClass(object):
+
+    def __str__(self):
+        return "EmptyValue"
+
+
+EmptyValue = _EmptyValueClass()
+
+
 def prop_constraint_optional_value_functional(constraint: PropValueConstraint):
     """
     Args:
@@ -374,13 +385,16 @@ def prop_constraint_optional_value_functional(constraint: PropValueConstraint):
     """
 
     def eval_func(value):
-        if value is None:
+        if value == EmptyValue:
             return ""
         else:
             constraint(value)
-            return constraint.violation_reason
+            if constraint.violation_reason:
+                return constraint.violation_reason + " or an EmptyValue"
+            else:
+                return ""
 
-    name = constraint.name + "_OR_None"
+    name = constraint.name + "_OR_Empty"
     eval_on_init = constraint.eval_on_init
     return PropValueConstraint(name=name, eval_value_func=eval_func, eval_on_init=eval_on_init)
 
@@ -452,7 +466,9 @@ def create_violated_constraint_dict():
 
 
 class ReInitPropConstr:
-    def __init__(self, del_constr: list = [], add_constr: list = []):
+    def __init__(self,
+                 del_constr: List[PropValueConstraint] = [],
+                 add_constr: List[PropValueConstraint] = []):
         """
         Forces the reinitialisation of a property value under updated constraints, if set on a clabject via
         :meth:`multilevel_py.core.MetaClabject.require_re_init_on_next_step`
@@ -461,6 +477,15 @@ class ReInitPropConstr:
             del_constr: list of constraints to remove for the next re instantiation of the prop
             add_constr: list of constraints to validate for the next instantiation step
         """
+        for constr in add_constr:
+            if not isinstance(constr, PropValueConstraint):
+                raise InvalidPropValueConstraintException(constr=constr)
+        for constr in del_constr:
+            if not isinstance(constr, PropValueConstraint):
+                raise InvalidPropValueConstraintException(constr=constr)
+            if constr.type_specific:
+                raise TypeSpecificConstraintRemovalException(constr=constr)
+
         self.del_constr = del_constr
         self.add_constr = add_constr
 

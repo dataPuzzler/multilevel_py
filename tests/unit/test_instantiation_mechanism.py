@@ -1,5 +1,5 @@
 from multilevel_py.core import Clabject
-from multilevel_py.clabject_prop import SingleValueProp, MethodProp
+from multilevel_py.clabject_prop import SimpleProp, MethodProp
 from types import FunctionType
 from multilevel_py.exceptions import UninitialisedPropException, UnduePropInstantiationException, UndefinedPropsException, \
     ConstraintViolationException, ChangeFinalPropException, NotAClabjectException, ClabjectDeclaredAsInstanceException
@@ -43,36 +43,36 @@ import math
 def build_Meta_meta():
     def builder():
         Meta_meta = Clabject(name="MetaMeta", parents=[], init_props={})  # > Level 3 via Prop e
-        prop_a = SingleValueProp(prop_name="a",
-                              constraints=[is_str_constraint],
-                              steps_to_instantiation=0,
-                              steps_from_instantiation=math.inf,
-                              is_final=True,
-                              prop_value="MetaMetaProp")
+        prop_a = SimpleProp(prop_name="a",
+                            constraints=[is_str_constraint],
+                            steps_to_instantiation=0,
+                            steps_from_instantiation=math.inf,
+                            is_final=True,
+                            prop_value="MetaMetaProp")
 
-        prop_b = SingleValueProp(prop_name="b",
-                              constraints=[is_str_constraint],
-                              steps_to_instantiation=1,
-                              steps_from_instantiation=0,
-                              is_final=True)
+        prop_b = SimpleProp(prop_name="b",
+                            constraints=[is_str_constraint],
+                            steps_to_instantiation=1,
+                            steps_from_instantiation=0,
+                            is_final=True)
 
-        prob_c = SingleValueProp(prop_name="c",
-                              constraints=[is_int_constraint],
-                              steps_to_instantiation=1,
-                              steps_from_instantiation=math.inf,
-                              is_final=False)
+        prob_c = SimpleProp(prop_name="c",
+                            constraints=[is_int_constraint],
+                            steps_to_instantiation=1,
+                            steps_from_instantiation=math.inf,
+                            is_final=False)
 
-        prob_d = SingleValueProp(prop_name="d",
-                              constraints=[is_function_constraint],
-                              steps_to_instantiation=2,
-                              steps_from_instantiation=math.inf,
-                              is_final=True)
+        prob_d = SimpleProp(prop_name="d",
+                            constraints=[is_function_constraint],
+                            steps_to_instantiation=2,
+                            steps_from_instantiation=math.inf,
+                            is_final=True)
 
-        prob_e = SingleValueProp(prop_name="e",
-                              constraints=[is_str_constraint],
-                              steps_to_instantiation=3,
-                              steps_from_instantiation=math.inf,
-                              is_final=True)
+        prob_e = SimpleProp(prop_name="e",
+                            constraints=[is_str_constraint],
+                            steps_to_instantiation=3,
+                            steps_from_instantiation=math.inf,
+                            is_final=True)
 
         Meta_meta.define_props([prop_a, prop_b, prob_c, prob_d, prob_e])
         return Meta_meta
@@ -306,18 +306,18 @@ def build_MM_3(build_Meta_meta, build_Cl_ss):
         MM_3 = Clabject(name="MM_3", parents=[], init_props={})
         snd_order_instance_of_meta_meta_constraint = prop_constraint_ml_instance_of_th_order_functional(Meta_meta, 2)
 
-        prop_o = SingleValueProp(prop_name="o",
-                              constraints=[snd_order_instance_of_meta_meta_constraint],
-                              steps_to_instantiation=0,
-                              steps_from_instantiation=2,
-                              is_final=True,
-                              prop_value=prop_o)
+        prop_o = SimpleProp(prop_name="o",
+                            constraints=[snd_order_instance_of_meta_meta_constraint],
+                            steps_to_instantiation=0,
+                            steps_from_instantiation=2,
+                            is_final=True,
+                            prop_value=prop_o)
 
-        prop_i = SingleValueProp(prop_name="i",
-                              constraints=[is_int_constraint],
-                              steps_to_instantiation=1,
-                              steps_from_instantiation=math.inf,
-                              is_final=False)
+        prop_i = SimpleProp(prop_name="i",
+                            constraints=[is_int_constraint],
+                            steps_to_instantiation=1,
+                            steps_from_instantiation=math.inf,
+                            is_final=False)
 
         prob_m = MethodProp(prop_name="m",
                               constraints=[is_function_constraint],
@@ -383,11 +383,11 @@ def test_build_m2_a_with_valid_props_shows_expected_behaviour(build_Meta_meta, b
     assert M2_A.i == 999
 
     any_order_instance_of_Meta_meta_constraint = prop_constraint_ml_instance_of_th_order_functional(Meta_meta)
-    z_prop = SingleValueProp(prop_name="z",
-                          steps_to_instantiation=2,
-                          steps_from_instantiation=math.inf,
-                          constraints=[any_order_instance_of_Meta_meta_constraint],
-                          is_final=True)
+    z_prop = SimpleProp(prop_name="z",
+                        steps_to_instantiation=2,
+                        steps_from_instantiation=math.inf,
+                        constraints=[any_order_instance_of_Meta_meta_constraint],
+                        is_final=True)
     M2_A.define_props([z_prop])
     assert M2_A.__ml_props__['z'] is not None
 
@@ -402,11 +402,11 @@ def build_M2_A(build_MM_3, build_Meta_meta):
         M2_A = MM_3(name="M2_A", parents=[], init_props={'i': 333, 'm': manipulate_i_by_factor_x})
         Meta_meta = build_Meta_meta()
         any_order_instance_of_Meta_meta_constraint = prop_constraint_ml_instance_of_th_order_functional(Meta_meta)
-        z_prop = SingleValueProp(prop_name="z",
-                              steps_to_instantiation=2,
-                              steps_from_instantiation=math.inf,
-                              constraints=[any_order_instance_of_Meta_meta_constraint],
-                              is_final=True)
+        z_prop = SimpleProp(prop_name="z",
+                            steps_to_instantiation=2,
+                            steps_from_instantiation=math.inf,
+                            constraints=[any_order_instance_of_Meta_meta_constraint],
+                            is_final=True)
         M2_A.define_props([z_prop])
 
         return M2_A

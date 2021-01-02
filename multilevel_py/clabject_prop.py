@@ -3,7 +3,7 @@ from typing import Tuple, Union, List, Any
 from abc import abstractmethod
 
 from multilevel_py.constraints import PropValueConstraint, ReInitPropConstr
-from multilevel_py.exceptions import InvalidMultiplicityTupleException
+from multilevel_py.exceptions import InvalidMultiplicityTupleException, InvalidPropValueConstraintException
 
 
 class BaseClabjectProp:
@@ -46,7 +46,9 @@ class BaseClabjectProp:
         assert steps_from_instantiation >= 0
         assert isinstance(constraints, list)
         from multilevel_py.constraints import PropValueConstraint
-        assert all([isinstance(c, PropValueConstraint) for c in constraints])
+        for constr in constraints:
+            if not isinstance(constr, PropValueConstraint):
+                raise InvalidPropValueConstraintException(constr=constr)
         assert isinstance(is_final, bool)
         self.prop_name = prop_name
         self.steps_to_instantiation = steps_to_instantiation
@@ -56,12 +58,14 @@ class BaseClabjectProp:
         self.prop_value = prop_value
         self.default_value = default_value
         self.re_init_prop_constr: ReInitPropConstr = None
-        self.add_type_specific_constraints()
+        for ts_constr in self.type_specific_constraints():
+            ts_constr.type_specific = True
+            self.constraints.append(ts_constr)
 
     @abstractmethod
-    def add_type_specific_constraints(self) -> None:
+    def type_specific_constraints(self) -> List[PropValueConstraint]:
         """
-        Append type specific constraints to self.constraints
+        Declare type specific constraints that will be appended to self.constraints
         """
         pass
 
@@ -75,15 +79,10 @@ class BaseClabjectProp:
         pass
 
 
-class SingleValueProp(BaseClabjectProp):
+class SimpleProp(BaseClabjectProp):
     """
-    A single value property of a Clabject
+    A property of a Clabject, that is meant to hold a simple (single primitive) value
     """
-
-    def add_type_specific_constraints(self):
-        # nothing to do here
-        pass
-
     def __init__(self, prop_name: str,
                  steps_to_instantiation: int,
                  steps_from_instantiation: Union[int, float],
@@ -93,7 +92,7 @@ class SingleValueProp(BaseClabjectProp):
                  default_value: Any = None
                  ):
 
-        super(SingleValueProp, self).__init__(
+        super(SimpleProp, self).__init__(
             prop_name=prop_name,
             steps_to_instantiation=steps_to_instantiation,
             steps_from_instantiation=steps_from_instantiation,
@@ -103,16 +102,39 @@ class SingleValueProp(BaseClabjectProp):
             default_value=default_value
         )
 
+    def type_specific_constraints(self):
+        return []
+
     def get_viz_value_str(self):
-        res_str = self.prop_value
+        return str(self.prop_value)
 
-        # Clabject Association
-        from multilevel_py.core import is_clabject
+class AssociationProp(BaseClabjectProp):
+    """
+    A Property of a clabjec that is meant to hold an associated clabject
+    """
+    def __init__(self, prop_name: str,
+                 steps_to_instantiation: int,
+                 steps_from_instantiation: Union[int, float],
+                 constraints: List[PropValueConstraint] = [],
+                 is_final: bool = False,
+                 prop_value: Any = None,
+                 default_value: Any = None
+                 ):
+        super(AssociationProp, self).__init__(
+            prop_name=prop_name,
+            steps_to_instantiation=steps_to_instantiation,
+            steps_from_instantiation=steps_from_instantiation,
+            constraints=constraints,
+            is_final=is_final,
+            prop_value=prop_value,
+            default_value=default_value
+        )
+    def type_specific_constraints(self):
+        from multilevel_py.core import is_clabect_or_empty_constr
+        return [is_clabect_or_empty_constr]
 
-        if is_clabject(self.prop_value):
-            res_str = "Associated Clabject: " + str(self.prop_value)
-
-        return res_str
+    def get_viz_value_str(self):
+        return "Associated Clabject: " + str(self.prop_value)
 
 
 class CollectionDescription:
@@ -132,7 +154,7 @@ class CollectionDescription:
 
 class CollectionProp(BaseClabjectProp):
     """
-    A collection, i.e. a multi-value property of a Clabject
+    A property of a clabject that is meant to hold a collection, i.e. a multi-value property of a Clabject
     """
 
     def __init__(self, prop_name: str,
@@ -166,10 +188,11 @@ class CollectionProp(BaseClabjectProp):
         self.collection_desc = collection_desc
         self.collection_member_constr = None
 
-    def add_type_specific_constraints(self):
+    def type_specific_constraints(self):
+        _constraints = []
         if self.collection_desc is not None:
             from multilevel_py.constraints import is_collection_constraint
-            self.constraints.append(is_collection_constraint)
+            _constraints.append(is_collection_constraint)
 
             if self.collection_desc.min_max:
                 from multilevel_py.constraints import prop_constraint_collection_multiplicity_functional
@@ -178,13 +201,15 @@ class CollectionProp(BaseClabjectProp):
                     max_member_number=self.collection_desc.min_max[1],
                     eval_on_init=False
                 )
-                self.constraints.append(mult_constr)
+                _constraints.append(mult_constr)
+
             if self.collection_desc.member_value_constr:
                 from multilevel_py.constraints import prop_constraint_collection_member_functional
                 self.collection_member_constr = prop_constraint_collection_member_functional(
                     member_constr_func=self.collection_desc.member_value_constr,
                     eval_on_init=True)
-                self.constraints.append(self.collection_member_constr)
+                _constraints.append(self.collection_member_constr)
+            return _constraints
 
     def get_viz_value_str(self):
         return str(self.prop_value)
@@ -192,7 +217,7 @@ class CollectionProp(BaseClabjectProp):
 
 class MethodProp(BaseClabjectProp):
     """
-    A method property of a Clabject
+    A property of a clabject that is meant to hold a method object
     """
     def __init__(self, prop_name: str,
                  steps_to_instantiation: int,
@@ -213,9 +238,9 @@ class MethodProp(BaseClabjectProp):
             default_value=default_value
         )
 
-    def add_type_specific_constraints(self):
+    def type_specific_constraints(self):
         from multilevel_py.constraints import value_can_be_bound_as_method_constraint
-        self.constraints.append(value_can_be_bound_as_method_constraint)
+        return [value_can_be_bound_as_method_constraint]
 
     def get_viz_value_str(self):
         res_str = str(self.prop_value)
@@ -228,7 +253,7 @@ class MethodProp(BaseClabjectProp):
 
 class StateConstraintProp(BaseClabjectProp):
     """
-    A StateConstraint property of a Clabject
+    A property of a Clabject, that is meant to hold a StateConstraint
     """
     def __init__(self, prop_name: str,
                  steps_to_instantiation: int,
@@ -249,11 +274,11 @@ class StateConstraintProp(BaseClabjectProp):
             default_value=default_value
         )
 
-    def add_type_specific_constraints(self):
+    def type_specific_constraints(self):
         from .constraints import prop_constraint_py_isinstance_functional
         from .constraints import ClabjectStateConstraint
         is_clabject_state_constraint = prop_constraint_py_isinstance_functional(ClabjectStateConstraint, True)
-        self.constraints.append(is_clabject_state_constraint)
+        return [is_clabject_state_constraint]
 
     def get_viz_value_str(self):
         res_str = "StateConstraint: " + str(self.prop_value.name)

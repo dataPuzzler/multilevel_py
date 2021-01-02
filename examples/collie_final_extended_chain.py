@@ -73,5 +73,6 @@ def model_snippet():
     print(lassie.make_noise()) # > Wuff - I'm a Collie
     print(derek.make_noise()) # Wuff I'm a GoldenRetriever
 
+    hidden_root = False
     viz_name = str(Path(__file__).stem)
-    return Breed, viz_name
+    return Breed, viz_name, hidden_root

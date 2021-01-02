@@ -245,7 +245,7 @@ class MethodProp(BaseClabjectProp):
     def get_viz_value_str(self):
         res_str = str(self.prop_value)
         if hasattr(self.prop_value, "__impl_origin__"):
-            res_str = "Implementation from " + self.prop_value.__impl_origin__ + ":" + \
+            res_str = "Implementation from " + self.prop_value.__impl_origin__ + ": " + \
                       self.prop_value.__name__ + str(sig(self.prop_value))
 
         return res_str

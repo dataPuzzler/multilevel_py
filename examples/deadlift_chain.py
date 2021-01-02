@@ -60,5 +60,6 @@ def model_snippet():
     realisedDeadlift = ParameterisedDeadlift(name="RealisedDeadlift", init_props={"weight_load": realisedWeightLoad},
                                              declare_as_instance=True)
 
+    hidden_root = True
     viz_name = str(Path(__file__).stem)
-    return DslRoot, viz_name
+    return DslRoot, viz_name, hidden_root

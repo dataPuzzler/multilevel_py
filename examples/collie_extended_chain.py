@@ -25,5 +25,6 @@ def model_snippet():
         init_props={"year_of_birth": date(year=2002, month=2, day=20)},
         declare_as_instance=True)
 
+    hidden_root = False
     viz_name = str(Path(__file__).stem)
-    return Breed, viz_name
+    return Breed, viz_name, hidden_root

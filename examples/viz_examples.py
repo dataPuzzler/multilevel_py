@@ -13,7 +13,7 @@ from plan_chain_composite_element import model_snippet as ms_6
 from endurance_chain import model_snippet as ms_7
 from strength_chain import model_snippet as ms_8
 
-model_snippets = [ms_4]
+model_snippets = [ms_8]
 
 from multilevel_py.viz import viz_classification_hierarchy
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     print("Start plotting into " + str(output_dir))
     for model_snippet in model_snippets:
-        top_clabject, output_name = model_snippet()
+        top_clabject, output_name, hidden_root = model_snippet()
         viz_classification_hierarchy(top_clabject,
-                                     output_dir=output_dir, output_name=output_name, hidden_root=False,
+                                     output_dir=output_dir, output_name=output_name, hidden_root=hidden_root,
                                      format=format, font=font, fontsize=fontsize, by_level=False)

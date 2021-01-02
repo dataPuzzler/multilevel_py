@@ -40,18 +40,21 @@
                     <td align='left'><u>meta_prop_attrs:</u></td>
                 </tr>
                 {{prop_attr(prop)}}
-                {% if prop.prop_value %}
-                    <tr>
-                        <td align='left'><u>prop_value:</u></td>
-                    </tr>
-                    {{value(prop)}}
-                {% else %}
+
+                {% if prop.constraints %}
                     <tr>
                         <td align='left'><u>prop_constr:</u></td>
                     </tr>
                     {{constraints(prop.constraints, "") }}
+                {% endif %}
 
-                {% endif %}}
+                {% if prop.prop_value is not none %}
+                <tr>
+                    <td align='left'><u>prop_value:</u></td>
+                </tr>
+                {{value(prop)}}
+                {% endif %}
+
                 {% if prop.re_init_prop_constr is not none %}
                         <tr>
                             <td align='left'><u>re_init_constr:</u></td>

@@ -8,11 +8,11 @@ def model_snippet():
     Exercise.define_props([prop_exercise_name])
 
     StrengthExercise = Exercise(name="StrengthExercise", speed_adjustments={"exercise_name": 1})
-    prop_motor_kind = create_clabject_prop(n="motor_kind", t=0, f='*', i_f=True, c=[], v="strength")
+    prop_motor_kind = create_clabject_prop(n="motor_kind", t=0, f='*', i_f=True, c=[is_str_constraint], v="strength")
     StrengthExercise.define_props([prop_motor_kind])
 
     def define_contraction_form(clabject, prop_value):
-        prop_contraction_form = create_clabject_prop(n="contraction_form", t=0, f='*', i_f=True, c=[], v=prop_value)
+        prop_contraction_form = create_clabject_prop(n="contraction_form", t=0, f='*', i_f=True, c=[is_str_constraint], v=prop_value)
         clabject.define_props([prop_contraction_form])
 
     StaticStrengthExercise = StrengthExercise(name="StaticStrengthExercise", speed_adjustments={"exercise_name": 1})
@@ -22,7 +22,7 @@ def model_snippet():
     define_contraction_form(StaticStrengthExercise, "dynamic")
 
     def define_contraction_phase(clabject, prop_value):
-        prop_contraction_phase = create_clabject_prop(n="contraction_phase", t=0, f='*', i_f=True, c=[], v=prop_value)
+        prop_contraction_phase = create_clabject_prop(n="contraction_phase", t=0, f='*', i_f=True, c=[is_str_constraint], v=prop_value)
         clabject.define_props([prop_contraction_phase])
 
     ConcentricStrengthExercise = DynamicStrengthExercise(name="ConcentricStrengthExercise", speed_adjustments={"exercise_name": 1})
@@ -41,5 +41,6 @@ def model_snippet():
     ConcentricDeadlift = ConcentricStrengthExercise(name="ConcentricDeadlift", init_props={
         "exercise_name": "ConcentricDeadlift"})
 
+    hidden_root = False
     viz_name = str(Path(__file__).stem)
-    return Exercise, viz_name
+    return Exercise, viz_name, hidden_root

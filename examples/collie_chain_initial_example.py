@@ -12,5 +12,6 @@ def model_snippet():
 
     lassie = Collie(name="Lassie", init_props={"age": 7}, declare_as_instance=True)
 
+    hidden_root = False
     viz_name = str(Path(__file__).stem)
-    return Breed, viz_name
+    return Breed, viz_name, hidden_root

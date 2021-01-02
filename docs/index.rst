@@ -13,6 +13,13 @@ Welcome to multilevel_py's documentation!
 
    modules.rst
 
+.. include:: ../CHANGES.rst
+
+
+
+
+
+
 Indices and tables
 ==================
 

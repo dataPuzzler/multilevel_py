@@ -374,8 +374,7 @@ class MetaClabject(type):
     def instance_of(cls):
         """
         Returns:
-            The 'ontological' meta clabject of the current clabject. The term ontological should indicate that
-            this relation is related to the respective target domain abstraction.
+            The 'ontological' meta clabject of the current clabject. The term ontological should indicate that this relation is related to the respective target domain abstraction.
         """
 
         domain_meta = getattr(cls, "__domain_meta__")
@@ -405,7 +404,7 @@ class MetaClabject(type):
         framework_props = cls.get_framework_attrs()
         if item not in framework_props:
             if item not in cls.__ml_props__:
-                raise UndefinedPropsException(undefined_props=set(item))
+                raise UndefinedPropsException(undefined_props=set([item]))
             else:
                 return cls.__ml_props__[item].prop_value
 

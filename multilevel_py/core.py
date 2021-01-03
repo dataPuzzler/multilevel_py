@@ -187,7 +187,7 @@ class ClabjectPropDict(Dict[str, BaseClabjectProp]):
 
         # Handle Case 1 - throw exception
         if len(provided_but_not_defined_set):
-            raise UndefinedPropsException(undefined_props=provided_but_not_defined_set)
+            raise UndefinedPropsException(undefined_props=[provided_but_not_defined_set])
 
         # Handle Case 2: Ensure that all props that are due to be initialised are provided
         for prop_name in defined_but_not_provided_set:
@@ -270,7 +270,7 @@ class ClabjectPropDict(Dict[str, BaseClabjectProp]):
 
     def check_prop_in_keys(self, prop_name: str) -> None:
         if prop_name not in self.keys():
-            raise UndefinedPropsException(undefined_props=set((prop_name)))
+            raise UndefinedPropsException(undefined_props=set([prop_name]))
 
     def adjust_instantiation_speed(self, speed_adjustments: Dict[str, int]):
         """
@@ -412,7 +412,7 @@ class MetaClabject(type):
         framework_props = cls.get_framework_attrs()
         if item not in framework_props:
             if item not in cls.__ml_props__:
-                raise UndefinedPropsException(undefined_props=set(item))
+                raise UndefinedPropsException(undefined_props=set([item]))
             else:
                 return cls.__ml_props__[item].prop_value
 
@@ -430,7 +430,7 @@ class MetaClabject(type):
 
         else:
             if key not in cls.__ml_props__:
-                raise UndefinedPropsException(undefined_props=set(key))
+                raise UndefinedPropsException(undefined_props=set([key]))
             else:
                 step_to_inst = cls.__ml_props__[key].steps_to_instantiation
                 if step_to_inst > 0:

@@ -4,10 +4,10 @@ from pathlib import Path
 def model_snippet():
     from multilevel_py.constraints import prop_constraint_ml_instance_of_th_order_functional, \
         prop_constraint_optional_value_functional as optional
-    from multilevel_py.constraints import is_str_constraint, is_date_constraint, EmptyValue, ClabjectStateConstraint
+    from multilevel_py.constraints import is_str_constraint, is_date_constraint, \
+         EmptyValue, ClabjectStateConstraint
     from multilevel_py.core import create_clabject_prop, Clabject
     from datetime import date
-
 
     Breed = Clabject(name="Breed")
     coat_colour = create_clabject_prop(
@@ -17,14 +17,17 @@ def model_snippet():
     make_noise = create_clabject_prop(
         n="make_noise", t=1, f='*', i_f=False, i_m=True, c=[])
 
-    def eval_state(current_clab):
-        if current_clab.father != EmptyValue and current_clab.father.instance_of() != current_clab.instance_of():
-            return "If specified, the father must be of the same breed as the current dog clabject"
-        else:
-            return ""
+    def eval_state(current_clab) -> str:
+        res = ""
+        if current_clab.father != EmptyValue and \
+           current_clab.father.instance_of() != current_clab.instance_of():
+            res = "If specified, father must be of the same breed as the current dog"
+        return res
 
-    clab_state_constr = ClabjectStateConstraint(name="FatherOfSameBreed", eval_clabject_func=eval_state)
-    father_sc = create_clabject_prop(n="father_sc", t=3, f='*', i_sc=True, c=[], d=clab_state_constr)
+    clab_state_constr = ClabjectStateConstraint(
+        name="FatherOfTheSameBreedType", eval_clabject_func=eval_state)
+    father_sc = create_clabject_prop(
+        n="father_sc", t=3, f='*', i_sc=True, c=[], d=clab_state_constr)
 
     Breed.define_props([make_noise, coat_colour, father, father_sc])
 
@@ -35,6 +38,7 @@ def model_snippet():
 
     def make_noise(obj) -> str:
         return "Wuff I'm a Golden Retriever"
+
 
     GoldenRetriever = Breed(
         name="GoldenRetriever", 
@@ -57,15 +61,13 @@ def model_snippet():
 
     lassie = SableRoughCollie(
         name="Lassie",
-        init_props={
-        "father": sam},
+        init_props={"father": sam},
         declare_as_instance=True)
 
     derek = GoldenRetriever(
         name="Derek", 
         speed_adjustments={"father": -1, "father_sc": -1},
-        init_props={
-        "father": sam},
+        init_props={"father": sam},
         declare_as_instance=True)
 
     print(Collie.make_noise()) # > Wuff - I'm a Collie
@@ -75,7 +77,7 @@ def model_snippet():
     print(derek.make_noise()) # Wuff I'm a GoldenRetriever
 
     print(sam.check_state_constraints()) # > {}
-    print(derek.check_state_constraints()) # > {'father_sc': '...'}
+    print(derek.check_state_constraints()) # > {'father_sc': 'If specified, father ...'}
 
     hidden_root = False
     viz_name = str(Path(__file__).stem)

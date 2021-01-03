@@ -1,4 +1,5 @@
 from pathlib import Path
+from math import floor
 
 from graphviz import Digraph
 from multilevel_py.core import is_clabject
@@ -43,7 +44,7 @@ def _create_node(dot: Digraph, clabject, font, fontsize):
     dot.node(clabject.__name__, label=nodelabel, font=font, fontsize=fontsize)
 
 
-def _create_instantiate_relation(dot: Digraph, parent_clabject, instance_clabject):
+def _create_instantiate_relation(dot: Digraph, parent_clabject, instance_clabject, fontsize):
     inst_name = instance_clabject.__name__
     label = ""
 
@@ -56,7 +57,9 @@ def _create_instantiate_relation(dot: Digraph, parent_clabject, instance_clabjec
                 res[speed_adj_key] = str(speed_adj_value)
         # parent_clabject.speed_adjustments[inst_name] = res
         label = str(res)
-    dot.edge(parent_clabject.__name__, inst_name, label=label, style="dashed")
+        # print("The inst. lable font size is " + str(floor(int(fontsize) * 1.3)))
+    dot.edge(parent_clabject.__name__, inst_name, 
+        label=label, style="dashed", fontsize=str(floor(int(fontsize) * 1.2)))
 
 
 def _create_node_recursive(dot: Digraph, clabject, font, fontsize, hidden_root=False):
@@ -69,7 +72,7 @@ def _create_node_recursive(dot: Digraph, clabject, font, fontsize, hidden_root=F
     if clabject.instances is not None:
         for instance in clabject.instances:
             if not hidden_root:
-                _create_instantiate_relation(dot, clabject, instance)
+                _create_instantiate_relation(dot, clabject, instance, fontsize)
             _create_node_recursive(dot, instance, font, fontsize)
 
 
@@ -92,7 +95,7 @@ def _create_level_recursive(dot: Digraph,
     for clabject in prev_queue:
         if clabject.instances is not None:
             for instance in clabject.instances:
-                _create_instantiate_relation(dot, clabject, instance)
+                _create_instantiate_relation(dot, clabject, instance, fontsize)
 
     if len(next_queue) > 0 and next_level >= 0:
         _create_level_recursive(dot, prev_queue=current_queue, current_queue=next_queue,

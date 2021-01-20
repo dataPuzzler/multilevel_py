@@ -14,10 +14,10 @@ def model_snippet(sub_composite_hierarchy=False):
         def __init__(self, name: str):
             self.name = name
 
-    # Top Level - M3
     TrainingPlanElement = Clabject(name="TraingPlanElement", init_props={})
     prop_part_name = create_clabject_prop(n="part_name", t=3, f='*', c=[is_str_constraint])
     prop_calc_plan_duration = create_clabject_prop(n="calc_plan_duration", t=1, f='*', i_m=True)
+
     TrainingPlanElement.define_props([prop_part_name, prop_calc_plan_duration])
 
     def calc_plan_duration_recursive(obj) -> timedelta:
@@ -26,9 +26,9 @@ def model_snippet(sub_composite_hierarchy=False):
             planned_train_time += child_plan.calc_plan_duration()
         return planned_train_time
 
-    # M2 Section
-    CompositePlanElement = TrainingPlanElement(name="CompositePlanElement",
-                                               init_props={"calc_plan_duration": calc_plan_duration_recursive})
+    CompositePlanElement = TrainingPlanElement(
+        name="CompositePlanElement",
+        init_props={"calc_plan_duration": calc_plan_duration_recursive})
 
     def append_childs(obj, childs):
         for child in childs:
@@ -39,16 +39,17 @@ def model_snippet(sub_composite_hierarchy=False):
             else:
                 obj.child_plans.append(child)
 
-    composite_layer_child_constraint = \
-        prop_constraint_ml_instance_of_th_order_functional(TrainingPlanElement, instantiation_order=(3, 4),
-                                                           eval_on_init=True)
+    prop_child_plans = create_clabject_prop(
+        n="child_plans", t=2, f='*', c=[], coll_desc=(1, inf, None), d=[])
+    prop_append_child = create_clabject_prop(
+        n="append_childs", t=2, f='*', i_m=True, c=[], v=append_childs)
 
-    prop_child_plans = create_clabject_prop(n="child_plans", t=2, f='*', c=[],
-                                            coll_desc=(1, inf, composite_layer_child_constraint), d=[])
-    prop_append_child = create_clabject_prop(n="append_childs", t=2, f='*', c=[], v=append_childs, i_m=True)
     CompositePlanElement.define_props([prop_child_plans, prop_append_child])
 
-    SimplePlanElement = TrainingPlanElement(name="SimplePlanElement", speed_adjustments={"calc_plan_duration": 1})
+    SimplePlanElement = TrainingPlanElement(
+        name="SimplePlanElement", 
+        speed_adjustments={"calc_plan_duration": 1})
+
     is_exercise = prop_constraint_py_isinstance_functional(Exercise, eval_on_init=True)
     prop_exercise = create_clabject_prop(n="exercise", t=2, f='*', c=[is_exercise])
     prop_exercise_duration = create_clabject_prop(n="exercise_duration", t=2, f='*', c=[is_timedelta_constraint])
@@ -59,39 +60,49 @@ def model_snippet(sub_composite_hierarchy=False):
         train_duration = obj.exercise_duration + obj.rest_duration
         return train_duration
 
-    ExerciseSetPlanElement = SimplePlanElement(name="ExerciseSetPlanElement", parents=[],
-                                               init_props={"calc_plan_duration": calc_train_duration})
+    ExerciseSetPlanElement = SimplePlanElement(
+        name="ExerciseSetPlanElement",
+        init_props={"calc_plan_duration": calc_train_duration})
 
-    prop_rest_duration = create_clabject_prop(n="rest_duration", t=1, f='*', c=[is_timedelta_constraint])
+    prop_rest_duration = create_clabject_prop(
+        n="rest_duration", t=1, f='*', c=[is_timedelta_constraint])
+
     ExerciseSetPlanElement.define_props([prop_rest_duration])
 
     def calc_train_duration(obj):
         return obj.exercise_duration
 
-    ExerciseIntervalPlanElement = SimplePlanElement(name="ExerciseIntervalPlanElement", parents=[],
-                                                    init_props={"calc_plan_duration": calc_train_duration})
+    ExerciseIntervalPlanElement = SimplePlanElement(
+        name="ExerciseIntervalPlanElement", 
+        init_props={"calc_plan_duration": calc_train_duration})
 
     if sub_composite_hierarchy:
-        StressRestPatternPlanElement = CompositePlanElement(name="StressRestPatternPlanElement", init_props={},
-                                                            speed_adjustments={'part_name': 1, 'child_plans': 1})
+        StressRestPatternPlanElement = CompositePlanElement(
+            name="StressRestPatternPlanElement", init_props={},
+            speed_adjustments={'part_name': 1, 'child_plans': 1})
+
         stress_rest_child_constraint = prop_constraint_is_th_order_instance_of_clabject_set_functional(
             {SimplePlanElement}, order=2, eval_on_init=True)
-        StressRestPatternPlanElement.add_prop_constraint(prop_name="child_plans",
-                                                         constraint=as_member_constr(stress_rest_child_constraint))
+        StressRestPatternPlanElement.add_prop_constraint(
+            prop_name="child_plans", constraint=as_member_constr(stress_rest_child_constraint))
 
-        IntervalTrainingPlanElement = StressRestPatternPlanElement(name="IntervalTrainingPlanElement", init_props={})
+        IntervalTrainingPlanElement = StressRestPatternPlanElement(
+            name="IntervalTrainingPlanElement", init_props={})
         interval_childs = prop_constraint_is_th_order_instance_of_clabject_set_functional(
             expected_values={ExerciseIntervalPlanElement}, order=1)
-        IntervalTrainingPlanElement.add_prop_constraint(prop_name="child_plans",
-                                                        constraint=as_member_constr(interval_childs))
+        IntervalTrainingPlanElement.add_prop_constraint(
+            prop_name="child_plans",
+            constraint=as_member_constr(interval_childs))
 
-        StationTrainingPlanElement = StressRestPatternPlanElement(name="StationTrainingPlanElement", init_props={})
+        StationTrainingPlanElement = StressRestPatternPlanElement(
+            name="StationTrainingPlanElement", init_props={})
         station_childs = prop_constraint_is_th_order_instance_of_clabject_set_functional(
             expected_values={ExerciseSetPlanElement}, order=1)
         StationTrainingPlanElement.add_prop_constraint(prop_name="child_plans",
                                                        constraint=as_member_constr(station_childs))
 
-        TrainingSectionPlanElement = CompositePlanElement(name="TrainingSectionPlanElement", parents=[], init_props={})
+        TrainingSectionPlanElement = CompositePlanElement(
+            name="TrainingSectionPlanElement", init_props={})
         section_childs = prop_constraint_is_th_order_instance_of_clabject_set_functional(
             expected_values={StressRestPatternPlanElement}, order=2)
         TrainingSectionPlanElement.add_prop_constraint(prop_name="child_plans",

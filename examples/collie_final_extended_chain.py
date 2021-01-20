@@ -2,8 +2,8 @@ from pathlib import Path
 
 
 def model_snippet():
-    from multilevel_py.constraints import prop_constraint_ml_instance_of_th_order_functional, \
-        prop_constraint_optional_value_functional as optional
+    from multilevel_py.constraints import prop_constraint_ml_instance_of_th_order_functional
+    from multilevel_py.constraints import prop_constraint_optional_value_functional as optional
     from multilevel_py.constraints import is_str_constraint, is_date_constraint, \
          EmptyValue, ClabjectStateConstraint
     from multilevel_py.core import create_clabject_prop, Clabject
@@ -38,6 +38,7 @@ def model_snippet():
 
     def make_noise(obj) -> str:
         return "Wuff I'm a Golden Retriever"
+
 
 
     GoldenRetriever = Breed(
@@ -76,7 +77,7 @@ def model_snippet():
     print(lassie.make_noise()) # > Wuff - I'm a Collie
     print(derek.make_noise()) # Wuff I'm a GoldenRetriever
 
-    print(sam.check_state_constraints()) # > {}
+    print(lassie.check_state_constraints()) # > {}
     print(derek.check_state_constraints()) # > {'father_sc': 'If specified, father ...'}
 
     hidden_root = False

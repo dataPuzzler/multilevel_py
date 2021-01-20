@@ -283,7 +283,7 @@ def prop_constraint_collection_multiplicity_functional(min_member_number: int, m
             res_str += "The collection holds {N} members".format(N=len(collection_value))
         return res_str
 
-    name = "collection_multiplicity_between_{MIN}_and_{MAX}_constraint".format(MIN=min_member_number,
+    name = "collection_multiplicity_between_{MIN}_and_{MAX}".format(MIN=min_member_number,
                                                                                MAX=max_member_number)
     return PropValueConstraint(name=name, eval_value_func=eval_func, eval_on_init=eval_on_init)
 

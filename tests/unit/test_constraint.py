@@ -94,7 +94,7 @@ def test_int_arr_multiplicity_not_checked_on_init_but_found_in_explicit_check(Me
 
     constr_violations_names = [c.name for c in SrcClab.check_prop_constraints()["int_arr"]]
 
-    assert "collection_multiplicity_between_2_and_4_constraint" in constr_violations_names
+    assert "collection_multiplicity_between_2_and_4" in constr_violations_names
 
 
 def test_tgt_arr_member_violation(MetaSrcClab, MetaTgtClab):

@@ -376,7 +376,7 @@ class MetaClabject(type):
         """
         return ["__ml_props__", "__domain_meta__", "__name__",
                 "__slots__", "constraints", "re_init_prop_constr",
-                "declared_instance_flag", "speed_adjustments"]
+                "declared_instance_flag", "speed_adjustments", "viz_props_collapse"]
 
     def instance_of(cls):
         """
@@ -470,6 +470,7 @@ class MetaClabject(type):
         attr_dict["__domain_meta__"] = cls
         attr_dict["speed_adjustments"] = {}
         attr_dict["declared_instance_flag"] = declare_as_instance
+        attr_dict["viz_props_collapse"] = False
 
         # Handle Next Props
         if cls.__name__ == 'Clabject':

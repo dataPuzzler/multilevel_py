@@ -29,42 +29,44 @@
     <tr>
         <td align='left'><b>{{ clabject.viz_name_str() }}</b></td>
     </tr>
-    {% for prop in clabject.__ml_props__.values()%}
-    <tr>
-        <td port="{{prop.prop_name}}">
-            <table cellborder='0' cellspacing='0'>
-                <tr>
-                    <td align='left'><b>{{prop.prop_name}}</b></td>
-                </tr>
-                <tr>
-                    <td align='left'><u>meta_prop_attrs:</u></td>
-                </tr>
-                {{prop_attr(prop)}}
-
-                {% if prop.constraints %}
+    {% if not clabject.viz_props_collapse %}
+        {% for prop in clabject.__ml_props__.values()%}
+        <tr>
+            <td port="{{prop.prop_name}}">
+                <table cellborder='0' cellspacing='0'>
                     <tr>
-                        <td align='left'><u>prop_constr:</u></td>
+                        <td align='left'><b>{{prop.prop_name}}</b></td>
                     </tr>
-                    {{constraints(prop.constraints, "") }}
-                {% endif %}
+                    <tr>
+                        <td align='left'><u>meta_prop_attrs:</u></td>
+                    </tr>
+                    {{prop_attr(prop)}}
 
-                {% if prop.prop_value is not none %}
-                <tr>
-                    <td align='left'><u>prop_value:</u></td>
-                </tr>
-                {{value(prop)}}
-                {% endif %}
-
-                {% if prop.re_init_prop_constr is not none %}
+                    {% if prop.constraints %}
                         <tr>
-                            <td align='left'><u>re_init_constr:</u></td>
+                            <td align='left'><u>prop_constr:</u></td>
                         </tr>
-                        {{constraints(prop.re_init_prop_constr.del_constr, "-")}}
-                        {{constraints(prop.re_init_prop_constr.add_constr, "+")}}
-                {% endif %}
+                        {{constraints(prop.constraints, "") }}
+                    {% endif %}
 
-            </table>
-        </td>
-    </tr>
-    {% endfor %}
+                    {% if prop.prop_value is not none %}
+                    <tr>
+                        <td align='left'><u>prop_value:</u></td>
+                    </tr>
+                    {{value(prop)}}
+                    {% endif %}
+
+                    {% if prop.re_init_prop_constr is not none %}
+                            <tr>
+                                <td align='left'><u>re_init_constr:</u></td>
+                            </tr>
+                            {{constraints(prop.re_init_prop_constr.del_constr, "-")}}
+                            {{constraints(prop.re_init_prop_constr.add_constr, "+")}}
+                    {% endif %}
+
+                </table>
+            </td>
+        </tr>
+        {% endfor %}
+    {% endif %}
 </table>

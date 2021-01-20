@@ -130,8 +130,6 @@ class ConstraintViolationException(Exception):
         res_str = "\n"
         for constr_holder, violated_constraints in self.violated_constraints.items():
             for constraint in violated_constraints:
-                res_str += "'{HOLDER}' violated '{CONSTR}' for reason '{REASON}'".format(HOLDER=constr_holder,
-                                                                                   CONSTR=constraint.name,
-                                                                                   REASON=constraint.violation_reason)
+                res_str += "'{HOLDER}' violated '{CONSTR}' for reason '{REASON}'".format(HOLDER=constr_holder, CONSTR=constraint.name, REASON=constraint.violation_reason)
                 res_str += "\n"
         return res_str

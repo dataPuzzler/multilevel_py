@@ -11,7 +11,7 @@ multilevel_py
 
 *Multilevel_py* is a library that simplifies the construction of classification hierarchies over more than two levels.
 The framework depends on python3 only and implements a "deep instantiation" mechanism using pythons metaprogramming
-facilities. In academia the addressed topic is also discussed under the term "Multilevel (Meta-) Modelling". Since
+facilities. In academia, the addressed topic is also discussed under the term "Multilevel (Meta-) Modelling". Since
 there is no corresponding framework in the python community until this point, multilevel_py was built to fill this gap.
 
 Installing
@@ -19,9 +19,12 @@ Installing
 
 Install and update using `pip`_:
 
-.. code-block:: text
-
-    pip install multilevel_py
+.. code-block:: python
+    # Python only
+    pip install multilevel_py 
+    # with graphical syntax (viz module)
+    pip install multilevel_py[viz] 
+    
 
 
 A Simple Example

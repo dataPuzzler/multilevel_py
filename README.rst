@@ -19,13 +19,12 @@ Installing
 
 Install and update using `pip`_:
 
-.. code-block:: python
+.. code-block:: text
     # Python only
     pip install multilevel_py 
-    # with graphical syntax (viz module)
-    pip install multilevel_py[viz] 
+    # with graphical syntax
+    pip install multilevel_py[viz]
     
-
 
 A Simple Example
 ----------------

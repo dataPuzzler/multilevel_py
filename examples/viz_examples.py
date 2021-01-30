@@ -13,7 +13,7 @@ from plan_chain_composite_element import model_snippet as ms_6
 from endurance_chain import model_snippet as ms_7
 from strength_chain import model_snippet as ms_8
 
-model_snippets = [ms_4]
+model_snippets = [ms_1, ms_2, ms_3, ms_4, ms_5, ms_6, ms_7, ms_8]
 
 from multilevel_py.viz import viz_classification_hierarchy
 

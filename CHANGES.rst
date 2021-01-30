@@ -1,6 +1,16 @@
 Changes
 =======
 
+Version 0.3.0
+-------------
+
+Released 2021-01-30
+
+-   Fixing missing html templates in package via MANIFEST.in
+-   Visual Syntax Feature: Collapsable Clabjects
+-   Shortening of Constraint Naming
+
+
 Version 0.2.0
 -------------
 

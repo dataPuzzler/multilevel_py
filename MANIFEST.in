@@ -1,0 +1,2 @@
+include README.rst
+include multilevel_py/viz_templates/*.html

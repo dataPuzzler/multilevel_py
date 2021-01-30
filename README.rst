@@ -28,7 +28,7 @@ Install and update using `pip`_:
     pip install multilevel_py[viz] 
 
 
-Note that for using the graphical syntax, an installation of the underlying visualisation engine `graphviz` is required. 
+Note that for using the graphical syntax, an installation of the underlying visualisation engine `graphviz`_ is required. 
 
 A Simple Example
 ----------------

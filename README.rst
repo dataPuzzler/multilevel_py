@@ -20,8 +20,7 @@ Installing
 Install and update using `pip`_:
 
 .. code-block:: text
-    # Python only
-    pip install multilevel_py 
+	pip install multilevel_py 
     
 
 A Simple Example

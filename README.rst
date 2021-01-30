@@ -22,8 +22,6 @@ Install and update using `pip`_:
 .. code-block:: text
     # Python only
     pip install multilevel_py 
-    # with graphical syntax
-    pip install multilevel_py[viz]
     
 
 A Simple Example

@@ -1,4 +1,7 @@
+![Unittests](https://github.com/dataPuzzler/multilevel_py/workflows/Run%20unittests/badge.svg)
+![PyPi](https://github.com/dataPuzzler/multilevel_py/workflows/Upload%20a%20new%20Realase%20of%20the%20Python%20Package/badge.svg)
 .. image:: https://readthedocs.org/projects/multilevel-py/badge/?version=latest
+
 
 multilevel_py
 =============

@@ -20,8 +20,15 @@ Installing
 Install and update using `pip`_:
 
 .. code-block:: text
-	pip install multilevel_py 
+
+    # Python only
+    pip install multilevel_py 
     
+    # with graphical syntax
+    pip install multilevel_py[viz] 
+
+
+Note that for using the graphical syntax, an installation of the underlying visualisation engine `graphviz` is required. 
 
 A Simple Example
 ----------------
@@ -43,7 +50,7 @@ A Simple Example
 
 Visualisation
 -------------
-Using the viz module (requires installation of `pygraphviz`_) the following graph can be rendered for the previous
+Using the viz module, the following graph can be rendered for the previous
 example:
 
 .. image:: https://github.com/dataPuzzler/multilevel_py/blob/master/docs/images/collie_chain_initial_example.png
@@ -59,4 +66,4 @@ Links
 * Releases: https://pypi.org/project/multilevel-py/#description
 
 .. _pip: https://pip.pypa.io/en/stable/quickstart/
-.. _pygraphviz: https://pygraphviz.github.io/documentation/latest/index.html
+.. _graphviz: https://graphviz.org/

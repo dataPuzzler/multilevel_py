@@ -5,7 +5,7 @@ def model_snippet():
     from multilevel_py.core import create_clabject_prop, Clabject
     from multilevel_py.constraints import ReInitPropConstr
 
-    # DslRoot for illustration purposes - integrating three class. hierarchies
+    # DslRoot for illustration purposes - integrating three classification hierarchies
     DslRoot = Clabject(name="DSLRoot")
 
     # Mass Unit Hierarchy
@@ -36,7 +36,7 @@ def model_snippet():
         declare_as_instance=True,
          init_props={"symbol": "lb", "conversion_factor": 0.45359})
 
-    # Weigh Load Hierarchy
+    # Weight Load Hierarchy
     planned_value_prop = create_clabject_prop(
         n='planned_value', t=1, f='*', i_f=False, c=[is_float_constraint])
     actual_value_prop = create_clabject_prop(
